@@ -22,7 +22,7 @@ abstract class Bloc<Event, State> extends Cubit<State>
     _bindEventsToStates();
   }
 
-  /// The current [BlocObserver].
+  /// bloc 观察者
   static BlocObserver observer = BlocObserver();
 
   final _eventController = StreamController<Event>.broadcast();
@@ -47,22 +47,6 @@ abstract class Bloc<Event, State> extends Cubit<State>
 
   /// Called whenever an [event] is [add]ed to the [Bloc].
   /// A great spot to add logging/analytics at the individual [Bloc] level.
-  ///
-  /// **Note: `super.onEvent` should always be called first.**
-  /// ```dart
-  /// @override
-  /// void onEvent(Event event) {
-  ///   // Always call super.onEvent with the current event
-  ///   super.onEvent(event);
-  ///
-  ///   // Custom onEvent logic goes here
-  /// }
-  /// ```
-  ///
-  /// See also:
-  ///
-  /// * [BlocObserver] for observing [Bloc] behavior globally.
-  ///
   @protected
   @mustCallSuper
   void onEvent(Event event) {
@@ -82,26 +66,6 @@ abstract class Bloc<Event, State> extends Cubit<State>
   ///
   /// For example, if you only want [mapEventToState] to be called on the most
   /// recent [Event] you can use `switchMap` instead of `asyncExpand`.
-  ///
-  /// ```dart
-  /// @override
-  /// Stream<Transition<Event, State>> transformEvents(events, transitionFn) {
-  ///   return events.switchMap(transitionFn);
-  /// }
-  /// ```
-  ///
-  /// Alternatively, if you only want [mapEventToState] to be called for
-  /// distinct [events]:
-  ///
-  /// ```dart
-  /// @override
-  /// Stream<Transition<Event, State>> transformEvents(events, transitionFn) {
-  ///   return super.transformEvents(
-  ///     events.distinct(),
-  ///     transitionFn,
-  ///   );
-  /// }
-  /// ```
   Stream<Transition<Event, State>> transformEvents(
     Stream<Event> events,
     TransitionFunction<Event, State> transitionFn,
@@ -121,17 +85,6 @@ abstract class Bloc<Event, State> extends Cubit<State>
   /// You can override [transformTransitions] for advanced usage in order to
   /// manipulate the frequency and specificity at which `transitions`
   /// (state changes) occur.
-  ///
-  /// For example, if you want to debounce outgoing state changes:
-  ///
-  /// ```dart
-  /// @override
-  /// Stream<Transition<Event, State>> transformTransitions(
-  ///   Stream<Transition<Event, State>> transitions,
-  /// ) {
-  ///   return transitions.debounceTime(Duration(seconds: 1));
-  /// }
-  /// ```
   Stream<Transition<Event, State>> transformTransitions(
     Stream<Transition<Event, State>> transitions,
   ) {
@@ -143,22 +96,6 @@ abstract class Bloc<Event, State> extends Cubit<State>
   /// executed.
   /// [onTransition] is called before a [Bloc]'s [state] has been updated.
   /// A great spot to add logging/analytics at the individual [Bloc] level.
-  ///
-  /// **Note: `super.onTransition` should always be called first.**
-  /// ```dart
-  /// @override
-  /// void onTransition(Transition<Event, State> transition) {
-  ///   // Always call super.onTransition with the current transition
-  ///   super.onTransition(transition);
-  ///
-  ///   // Custom onTransition logic goes here
-  /// }
-  /// ```
-  ///
-  /// See also:
-  ///
-  /// * [BlocObserver] for observing [Bloc] behavior globally.
-  ///
   @protected
   @mustCallSuper
   void onTransition(Transition<Event, State> transition) {
@@ -178,22 +115,6 @@ abstract class Bloc<Event, State> extends Cubit<State>
   /// The [stackTrace] argument may be `null` if the [state] stream received
   /// an error without a [stackTrace].
   /// A great spot to handle errors at the individual [Bloc] level.
-  ///
-  /// **Note: `super.onError` should always be called last.**
-  /// ```dart
-  /// @override
-  /// void onError(Object error, StackTrace stackTrace) {
-  ///   // Custom onError logic goes here
-  ///
-  ///   // Always call super.onError with the current error and stackTrace
-  ///   super.onError(error, stackTrace);
-  /// }
-  /// ```
-  ///
-  /// See also:
-  ///
-  /// * [BlocObserver] for observing [Bloc] behavior globally.
-  ///
   @protected
   @mustCallSuper
   @override

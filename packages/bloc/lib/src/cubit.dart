@@ -6,11 +6,7 @@ import 'bloc.dart';
 import 'bloc_observer.dart';
 import 'change.dart';
 
-/// {@template cubit_unhandled_error_exception}
-/// Exception thrown when an unhandled error occurs within a [Cubit].
-///
-/// _Note: thrown in debug mode only_
-/// {@endtemplate}
+/// Cubit 未处理的异常
 class CubitUnhandledErrorException implements Exception {
   /// {@macro cubit_unhandled_error_exception}
   CubitUnhandledErrorException(this.cubit, this.error, [this.stackTrace]);
@@ -31,24 +27,10 @@ class CubitUnhandledErrorException implements Exception {
   }
 }
 
-/// {@template cubit}
-/// A [Cubit] is a subset of [Bloc] which has no notion of events
-/// and relies on methods to [emit] new states.
-///
-/// Every [Cubit] requires an initial state which will be the
-/// state of the [Cubit] before [emit] has been called.
-///
-/// The current state of a [Cubit] can be accessed via the [state] getter.
-///
-/// ```dart
-/// class CounterCubit extends Cubit<int> {
-///   CounterCubit() : super(0);
-///
-///   void increment() => emit(state + 1);
-/// }
-/// ```
-///
-/// {@endtemplate}
+/// [Cubit]是[Bloc]的子集，它没有事件
+/// 并且依赖于[emit]新状态的方法。
+/// 每个[Cubit]都需要一个初始状态，该初始状态将是// [emit]被调用之前[Cubit]的状态。
+/// 可以通过[state] getter访问[Cubit]的当前状态
 abstract class Cubit<State> extends Stream<State> {
   /// {@macro cubit}
   Cubit(this._state) {
@@ -56,26 +38,23 @@ abstract class Cubit<State> extends Stream<State> {
     _observer.onCreate(this);
   }
 
-  /// The current [state].
+  /// 获取当前的状态
   State get state => _state;
 
+  ///Bloc的观察者
   BlocObserver get _observer => Bloc.observer;
 
+  ///Stream的controller
   StreamController<State> _controller;
 
+  ///当前的状态
   State _state;
 
   bool _emitted = false;
 
-  /// {@template emit}
-  /// Updates the [state] to the provided [state].
-  /// [emit] does nothing if the [Cubit] has been closed or if the
-  /// [state] being emitted is equal to the current [state].
-  ///
-  /// To allow for the possibility of notifying listeners of the initial state,
-  /// emitting a state which is equal to the initial state is allowed as long
-  /// as it is the first thing emitted by the [Cubit].
-  /// {@endtemplate}
+  /// 改变state的事件
+  /// 如果当前controller已关闭不处理
+  /// 如果要修改的值和当前的值相同并且 _emitted = true
   @protected
   @visibleForTesting
   void emit(State state) {
@@ -93,48 +72,14 @@ abstract class Cubit<State> extends Stream<State> {
     onError(error, stackTrace);
   }
 
-  /// Called whenever a [change] occurs with the given [change].
-  /// A [change] occurs when a new `state` is emitted.
-  /// [onChange] is called before the `state` of the `cubit` is updated.
-  /// [onChange] is a great spot to add logging/analytics for a specific `cubit`.
   ///
-  /// **Note: `super.onChange` should always be called first.**
-  /// ```dart
-  /// @override
-  /// void onChange(Change change) {
-  ///   // Always call super.onChange with the current change
-  ///   super.onChange(change);
-  ///
-  ///   // Custom onChange logic goes here
-  /// }
-  /// ```
-  ///
-  /// See also:
-  ///
-  /// * [BlocObserver] for observing [Cubit] behavior globally.
   @mustCallSuper
   void onChange(Change<State> change) {
     // ignore: invalid_use_of_protected_member
     _observer.onChange(this, change);
   }
 
-  /// Called whenever an [error] occurs within a [Cubit].
-  /// By default all [error]s will be ignored and [Cubit] functionality will be
-  /// unaffected.
-  /// The [stackTrace] argument may be `null` if the [state] stream received
-  /// an error without a [stackTrace].
-  /// A great spot to handle errors at the individual [Cubit] level.
   ///
-  /// **Note: `super.onError` should always be called last.**
-  /// ```dart
-  /// @override
-  /// void onError(Object error, StackTrace stackTrace) {
-  ///   // Custom onError logic goes here
-  ///
-  ///   // Always call super.onError with the current error and stackTrace
-  ///   super.onError(error, stackTrace);
-  /// }
-  /// ```
   @protected
   @mustCallSuper
   void onError(Object error, StackTrace stackTrace) {
@@ -165,8 +110,7 @@ abstract class Cubit<State> extends Stream<State> {
     );
   }
 
-  /// Returns whether the `Stream<State>` is a broadcast stream.
-  /// Every [Cubit] is a broadcast stream.
+  ///
   @override
   bool get isBroadcast => true;
 
