@@ -1,29 +1,28 @@
 import 'package:meta/meta.dart';
 
 import 'cubit.dart';
+import 'index.dart';
 
 class BlocObserver {
   @protected
   @mustCallSuper
-  void onCreate() {}
+  void onCreate(Cubit cubit) {}
 
   @protected
   @mustCallSuper
-  void onEvent() {}
+  void onEvent(Bloc bloc, Object event) {}
 
   @protected
   @mustCallSuper
-  void onChange() {}
+  void onChange(Cubit cubit, Change change) {}
 
   @protected
   @mustCallSuper
-  void onTransition() {}
+  void onTransition(Bloc bloc, Transition transition) {}
 
   @protected
   @mustCallSuper
-  void onError(Cubit cubit, Object error, StackTrace stackTrace) {
-
-  }
+  void onError(Cubit cubit, Object error, StackTrace stackTrace) {}
 
   @protected
   @mustCallSuper
