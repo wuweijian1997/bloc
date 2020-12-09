@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:meta/meta.dart';
-
 import 'index.dart';
 
 typedef TransitionFunction<Event, State> = Stream<Transition<Event, State>>
@@ -9,14 +7,12 @@ typedef TransitionFunction<Event, State> = Stream<Transition<Event, State>>
 
 abstract class Bloc<Event, State> extends Cubit<State>
     implements EventSink<Event> {
-  Bloc(State state) : super(state);
-
-  ///bloc 观察者,回调 onCreate, onEvent, onChange,
-  ///onTransition, onError, onClose事件.
-  static BlocObserver observer = BlocObserver();
+  Bloc(State state) : super(state) {
+    _bindEventToState();
+  }
 
   ///事件 的 StreamController
-  final StreamController _eventController = StreamController<Event>.broadcast();
+  final StreamController<Event> _eventController = StreamController.broadcast();
 
   StreamSubscription<Transition<Event, State>> _transitionSubscription;
 
@@ -26,23 +22,11 @@ abstract class Bloc<Event, State> extends Cubit<State>
   @override
   void add(Event event) {
     if (_eventController.isClosed) return;
-    try {
-      onEvent(event);
-      _eventController.add(event);
-    } catch (error, stackTrace) {
-      onError(error, stackTrace);
-    }
+    _eventController.add(event);
   }
 
-  @protected
-  @mustCallSuper
-  void onEvent(Event event) {
-    // ignore: invalid_use_of_protected_member
-    observer.onEvent(this, event);
-  }
-
-  Stream<Transition<Event, State>> transformEvents(Stream<Event> events,
-      TransitionFunction<Event, State> transitionFn) {
+  Stream<Transition<Event, State>> transformEvents(
+      Stream<Event> events, TransitionFunction<Event, State> transitionFn) {
     return events.asyncExpand(transitionFn);
   }
 
@@ -50,8 +34,40 @@ abstract class Bloc<Event, State> extends Cubit<State>
   Stream<State> mapEventToState(Event event);
 
   Stream<Transition<Event, State>> transformTransitions(
-      Stream<Transition<Event, State>> transitions
-      ) {
+      Stream<Transition<Event, State>> transitions) {
     return transitions;
+  }
+
+  @override
+  Future<void> close() async {
+    await _eventController.close();
+    await _transitionSubscription.cancel();
+    return super.close();
+  }
+
+  @override
+  void emit(State state) => super.emit(state);
+
+  void _bindEventToState() {
+    var _transformEvents = transformEvents(
+      _eventController.stream,
+      (event) => mapEventToState(event).map(
+        (nextState) => Transition(
+          currentState: state,
+          event: event,
+          nextState: nextState,
+        ),
+      ),
+    );
+    var _transformTransitions = transformTransitions(_transformEvents);
+    _transitionSubscription = _transformTransitions.listen((event) {
+      if (event.nextState == state && _emitted) return;
+      emit(event.nextState);
+      _emitted = true;
+    });
+  }
+
+  @override
+  void addError(Object error, [StackTrace stackTrace]) {
   }
 }
