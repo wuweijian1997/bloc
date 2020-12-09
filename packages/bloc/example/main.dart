@@ -71,7 +71,6 @@ void blocMain() async {
 
   /// Create a `CounterBloc` instance.
   final bloc = CounterBloc();
-
   /// Access the state of the `bloc` via `state`.
   print(bloc.state);
 
