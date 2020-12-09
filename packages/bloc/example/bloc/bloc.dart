@@ -22,6 +22,7 @@ abstract class Bloc<Event, State> extends Cubit<State>
 
   bool _emitted = false;
 
+  ///添加事件
   @override
   void add(Event event) {
     if (_eventController.isClosed) return;
@@ -43,5 +44,14 @@ abstract class Bloc<Event, State> extends Cubit<State>
   Stream<Transition<Event, State>> transformEvents(Stream<Event> events,
       TransitionFunction<Event, State> transitionFn) {
     return events.asyncExpand(transitionFn);
+  }
+
+  ///通过 event 改变 state.子类实现
+  Stream<State> mapEventToState(Event event);
+
+  Stream<Transition<Event, State>> transformTransitions(
+      Stream<Transition<Event, State>> transitions
+      ) {
+    return transitions;
   }
 }
