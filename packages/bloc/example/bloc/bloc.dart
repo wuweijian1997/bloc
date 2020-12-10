@@ -26,7 +26,9 @@ abstract class Bloc<Event, State> extends Cubit<State>
   }
 
   Stream<Transition<Event, State>> transformEvents(
-      Stream<Event> events, TransitionFunction<Event, State> transitionFn) {
+    Stream<Event> events,
+    TransitionFunction<Event, State> transitionFn,
+  ) {
     return events.asyncExpand(transitionFn);
   }
 
@@ -34,7 +36,8 @@ abstract class Bloc<Event, State> extends Cubit<State>
   Stream<State> mapEventToState(Event event);
 
   Stream<Transition<Event, State>> transformTransitions(
-      Stream<Transition<Event, State>> transitions) {
+    Stream<Transition<Event, State>> transitions,
+  ) {
     return transitions;
   }
 
@@ -65,9 +68,5 @@ abstract class Bloc<Event, State> extends Cubit<State>
       emit(event.nextState);
       _emitted = true;
     });
-  }
-
-  @override
-  void addError(Object error, [StackTrace stackTrace]) {
   }
 }

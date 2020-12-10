@@ -5,65 +5,11 @@ import 'package:provider/provider.dart';
 import 'bloc_builder.dart';
 import 'bloc_listener.dart';
 
-/// {@template bloc_consumer}
-/// [BlocConsumer] exposes a [builder] and [listener] in order react to new
-/// states.
-/// [BlocConsumer] is analogous to a nested `BlocListener`
-/// and `BlocBuilder` but reduces the amount of boilerplate needed.
-/// [BlocConsumer] should only be used when it is necessary to both rebuild UI
-/// and execute other reactions to state changes in the [cubit].
-///
-/// [BlocConsumer] takes a required `BlocWidgetBuilder`
-/// and `BlocWidgetListener` and an optional [cubit],
-/// `BlocBuilderCondition`, and `BlocListenerCondition`.
-///
-/// If the [cubit] parameter is omitted, [BlocConsumer] will automatically
-/// perform a lookup using `BlocProvider` and the current `BuildContext`.
-///
-/// ```dart
-/// BlocConsumer<BlocA, BlocAState>(
-///   listener: (context, state) {
-///     // do stuff here based on BlocA's state
-///   },
-///   builder: (context, state) {
-///     // return widget here based on BlocA's state
-///   }
-/// )
-/// ```
-///
-/// An optional [listenWhen] and [buildWhen] can be implemented for more
-/// granular control over when [listener] and [builder] are called.
-/// The [listenWhen] and [buildWhen] will be invoked on each [cubit] `state`
-/// change.
-/// They each take the previous `state` and current `state` and must return
-/// a [bool] which determines whether or not the [builder] and/or [listener]
-/// function will be invoked.
-/// The previous `state` will be initialized to the `state` of the [cubit] when
-/// the [BlocConsumer] is initialized.
-/// [listenWhen] and [buildWhen] are optional and if they aren't implemented,
-/// they will default to `true`.
-///
-/// ```dart
-/// BlocConsumer<BlocA, BlocAState>(
-///   listenWhen: (previous, current) {
-///     // return true/false to determine whether or not
-///     // to invoke listener with state
-///   },
-///   listener: (context, state) {
-///     // do stuff here based on BlocA's state
-///   },
-///   buildWhen: (previous, current) {
-///     // return true/false to determine whether or not
-///     // to rebuild the widget with state
-///   },
-///   builder: (context, state) {
-///     // return widget here based on BlocA's state
-///   }
-/// )
-/// ```
-/// {@endtemplate}
+/// 同时提供了 构建widget的方法和 监听事件方法.用户可以通过 buildWhen来控制是否
+/// 需要rebuild,通过listenWhen来处理收到的通知事件.
+/// 相当于 BlocBuilder 和 BlocListener的融合状态
 class BlocConsumer<C extends Cubit<S>, S> extends StatefulWidget {
-  /// {@macro bloc_consumer}
+  /// Bloc Consumer
   const BlocConsumer({
     Key key,
     @required this.builder,
@@ -75,29 +21,20 @@ class BlocConsumer<C extends Cubit<S>, S> extends StatefulWidget {
         assert(listener != null),
         super(key: key);
 
-  /// The [cubit] that the [BlocConsumer] will interact with.
-  /// If omitted, [BlocConsumer] will automatically perform a lookup using
-  /// `BlocProvider` and the current `BuildContext`.
+  /// Cubit
   final C cubit;
 
-  /// The [builder] function which will be invoked on each widget build.
-  /// The [builder] takes the `BuildContext` and current `state` and
-  /// must return a widget.
-  /// This is analogous to the [builder] function in [StreamBuilder].
+  /// Widget builder, 参数是 BuildContext和State
   final BlocWidgetBuilder<S> builder;
 
-  /// Takes the `BuildContext` along with the [cubit] `state`
-  /// and is responsible for executing in response to `state` changes.
+  /// BlocWidget的state改变 listener, 参数是 BuildContext和State,
+  /// 可以通过listenWhen来控制调用的时机
   final BlocWidgetListener<S> listener;
 
-  /// Takes the previous `state` and the current `state` and is responsible for
-  /// returning a [bool] which determines whether or not to trigger
-  /// [builder] with the current `state`.
+  /// 比较当前的state和之前的state,通过返回值来确认要不要重新builder.
   final BlocBuilderCondition<S> buildWhen;
 
-  /// Takes the previous `state` and the current `state` and is responsible for
-  /// returning a [bool] which determines whether or not to call [listener] of
-  /// [BlocConsumer] with the current `state`.
+  /// 比较之前和现在的state,返回true 或 false.来确认是否需要调用listener
   final BlocListenerCondition<S> listenWhen;
 
   @override

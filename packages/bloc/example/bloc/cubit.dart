@@ -2,25 +2,7 @@ import 'dart:async';
 
 import 'package:meta/meta.dart';
 
-///Cubit 未处理异常
-class CubitUnhandledErrorException implements Exception {
-  CubitUnhandledErrorException({this.cubit, this.error, this.stackTrace});
-
-  ///未处理的cubit
-  final Cubit cubit;
-
-  ///异常
-  final Object error;
-  final StackTrace stackTrace;
-
-  @override
-  String toString() {
-    return 'CubitUnhandledErrorException{cubit: '
-        '$cubit, error: $error, stackTrace: $stackTrace}';
-  }
-}
-
-class Cubit<State> extends Stream<State> {
+abstract class Cubit<State> extends Stream<State> {
   Cubit(this._state);
 
   State _state;
@@ -50,13 +32,18 @@ class Cubit<State> extends Stream<State> {
     bool cancelOnError,
   }) {
     _controller ??= StreamController.broadcast();
-    return _controller.stream.listen(onData,
-        onDone: onDone, onError: onError, cancelOnError: cancelOnError);
+    return _controller.stream.listen(
+      onData,
+      onDone: onDone,
+      onError: onError,
+      cancelOnError: cancelOnError,
+    );
   }
 
   @override
   bool get isBroadcast => true;
 
+  @mustCallSuper
   Future<void> close() {
     return _controller?.close();
   }
