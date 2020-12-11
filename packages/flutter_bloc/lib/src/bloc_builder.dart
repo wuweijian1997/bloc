@@ -76,10 +76,7 @@ class _BlocBuilderBaseState<C extends Cubit<S>, S>
     return BlocListener<C, S>(
       cubit: _cubit,
       listenWhen: widget.buildWhen,
-      listener: (context, state) {
-        print('BlocBuilder build setState');
-        setState(() => _state = state);
-      },
+      listener: (context, state) => setState(() => _state = state),
       child: widget.build(context, _state),
     );
   }
