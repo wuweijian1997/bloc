@@ -446,7 +446,7 @@ void main() {
               body: Builder(
                 builder: (context) => Text(
                   // ignore: deprecated_member_use_from_same_package
-                  '${context.bloc<CounterCubit>().state}',
+                  '${context.read<CounterCubit>().state}',
                   key: textKey,
                 ),
               ),
