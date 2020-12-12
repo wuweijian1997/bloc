@@ -1,120 +1,69 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-
-class SimpleBlocObserver extends BlocObserver {
-  @override
-  void onCreate(Cubit cubit) {
-    super.onCreate(cubit);
-    print('onCreate -- cubit: ${cubit.runtimeType}');
-  }
-
-  @override
-  void onEvent(Bloc bloc, Object event) {
-    super.onEvent(bloc, event);
-    print('onEvent -- bloc: ${bloc.runtimeType}, event: $event');
-  }
-
-  @override
-  void onChange(Cubit cubit, Change change) {
-    super.onChange(cubit, change);
-    print('onChange -- cubit: ${cubit.runtimeType}, change: $change');
-  }
-
-  @override
-  void onTransition(Bloc bloc, Transition transition) {
-    super.onTransition(bloc, transition);
-    print('onTransition -- bloc: ${bloc.runtimeType}, transition: $transition');
-  }
-
-  @override
-  void onError(Cubit cubit, Object error, StackTrace stackTrace) {
-    print('onError -- cubit: ${cubit.runtimeType}, error: $error');
-    super.onError(cubit, error, stackTrace);
-  }
-
-  @override
-  void onClose(Cubit cubit) {
-    super.onClose(cubit);
-    print('onClose -- cubit: ${cubit.runtimeType}');
-  }
-}
+import 'bloc/index.dart';
 
 void main() {
-  Bloc.observer = SimpleBlocObserver();
-
   cubitMain();
-  blocMain();
+  // blocMain();
 }
 
 void cubitMain() {
   print('----------CUBIT----------');
 
-  /// Create a `CounterCubit` instance.
+  ///常见一个CounterCubit
   final cubit = CounterCubit();
 
-  /// Access the state of the `cubit` via `state`.
   print(cubit.state); // 0
 
-  /// Interact with the `cubit` to trigger `state` changes.
+  /// 调用 CounterCubit的increment事件
   cubit.increment();
 
-  /// Access the new `state`.
   print(cubit.state); // 1
 
-  /// Close the `cubit` when it is no longer needed.
+  /// 关闭cubit
   cubit.close();
 }
 
 void blocMain() async {
   print('----------BLOC----------');
 
-  /// Create a `CounterBloc` instance.
+  /// 创建一个 bloc
   final bloc = CounterBloc();
-
-  /// Access the state of the `bloc` via `state`.
   print(bloc.state);
 
-  /// Interact with the `bloc` to trigger `state` changes.
+  /// 发送一个增加事件
   bloc.add(CounterEvent.increment);
 
-  /// Wait for next iteration of the event-loop
-  /// to ensure event has been processed.
+  /// 事件循环
   await Future<void>.delayed(Duration.zero);
 
-  /// Access the new `state`.
   print(bloc.state);
 
-  /// Close the `bloc` when it is no longer needed.
+  /// 关闭 bloc
   await bloc.close();
 }
 
-/// A `CounterCubit` which manages an `int` as its state.
+/// 计数Cubit
 class CounterCubit extends Cubit<int> {
-  /// The initial state of the `CounterCubit` is 0.
+  ///初始化cubit,默认值为0;
   CounterCubit() : super(0);
 
-  /// When increment is called, the current state
-  /// of the cubit is accessed via `state` and
-  /// a new `state` is emitted via `emit`.
+  ///增加事件,使用emit触发更新
   void increment() => emit(state + 1);
 }
 
-/// The events which `CounterBloc` will react to.
+/// Bloc事件
 enum CounterEvent { increment }
 
-/// A `CounterBloc` which handles converting `CounterEvent`s into `int`s.
+/// 计数bloc
 class CounterBloc extends Bloc<CounterEvent, int> {
-  /// The initial state of the `CounterBloc` is 0.
+  /// 初始化,默认值为0.
   CounterBloc() : super(0);
 
+  ///计数bloc事件处理
   @override
   Stream<int> mapEventToState(CounterEvent event) async* {
     switch (event) {
-
-      /// When a `CounterEvent.increment` event is added,
-      /// the current `state` of the bloc is accessed via the `state` property
-      /// and a new state is emitted via `yield`.
       case CounterEvent.increment:
         yield state + 1;
         break;

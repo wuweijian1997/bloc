@@ -4,55 +4,28 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Custom [BlocObserver] which observes all bloc and cubit instances.
-class SimpleBlocObserver extends BlocObserver {
-  @override
-  void onEvent(Bloc bloc, Object event) {
-    print(event);
-    super.onEvent(bloc, event);
-  }
-
-  @override
-  void onChange(Cubit cubit, Change change) {
-    print(change);
-    super.onChange(cubit, change);
-  }
-
-  @override
-  void onTransition(Bloc bloc, Transition transition) {
-    print(transition);
-    super.onTransition(bloc, transition);
-  }
-
-  @override
-  void onError(Cubit cubit, Object error, StackTrace stackTrace) {
-    print(error);
-    super.onError(cubit, error, stackTrace);
-  }
-}
-
 void main() {
-  Bloc.observer = SimpleBlocObserver();
   runApp(App());
 }
 
-/// A [StatelessWidget] which uses:
-/// * [bloc](https://pub.dev/packages/bloc)
-/// * [flutter_bloc](https://pub.dev/packages/flutter_bloc)
-/// to manage the state of a counter.
+///
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ThemeCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ThemeCubit>(
+          create: (BuildContext context) => ThemeCubit(),
+        ),
+        BlocProvider<CounterBloc>(
+          create: (BuildContext context) => CounterBloc(),
+        ),
+      ],
       child: BlocBuilder<ThemeCubit, ThemeData>(
         builder: (_, theme) {
           return MaterialApp(
             theme: theme,
-            home: BlocProvider(
-              create: (_) => CounterBloc(),
-              child: CounterPage(),
-            ),
+            home: CounterPage(),
           );
         },
       ),
@@ -67,11 +40,21 @@ class CounterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Counter')),
-      body: BlocBuilder<CounterBloc, int>(
-        builder: (_, count) {
+      body: BlocConsumer<CounterBloc, int>(
+        builder: (_, int count) {
+          print('rebuild: count: $count');
           return Center(
             child: Text('$count', style: Theme.of(context).textTheme.headline1),
           );
+        },
+        listener: (_, int count) {
+          print('listener count: $count');
+        },
+        buildWhen: (prev, current) {
+          return prev != current && current % 2 == 0;
+        },
+        listenWhen: (prev, current) {
+          return prev != current && current % 3 == 0;
         },
       ),
       floatingActionButton: Column(

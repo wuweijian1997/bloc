@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 
+///
 @immutable
 class Change<State> {
   const Change({@required this.currentState, @required this.nextState});
