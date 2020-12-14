@@ -69,4 +69,8 @@ abstract class Bloc<Event, State> extends Cubit<State>
       _emitted = true;
     });
   }
+
+  @override
+  void addError(Object error, [StackTrace stackTrace]) {
+  }
 }
