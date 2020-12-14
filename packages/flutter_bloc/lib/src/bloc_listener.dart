@@ -67,7 +67,7 @@ abstract class BlocListenerBase<C extends Cubit<S>, S>
 
 class _BlocListenerBaseState<C extends Cubit<S>, S>
     extends SingleChildState<BlocListenerBase<C, S>> {
-  ///Cubit 的 subscription [订阅]
+  /// Cubit 的 subscription [订阅]
   StreamSubscription<S> _subscription;
   S _previousState;
   C _cubit;
@@ -83,16 +83,19 @@ class _BlocListenerBaseState<C extends Cubit<S>, S>
   @override
   void didUpdateWidget(BlocListenerBase<C, S> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    ///这里拿到老的cubit,如果当前widget里有传入cubit则拿这个cubit,否则到InheritedWidget查询cubit.
+    /// 这里拿到老的cubit,如果当前widget里有传入cubit则拿这个cubit,否则到InheritedWidget查询cubit.
     final oldCubit = oldWidget.cubit ?? context.read<C>();
     final currentCubit = widget.cubit ?? oldCubit;
-    ///如果两个cubit不相等
+    /// 如果两个cubit不相等
     if (oldCubit != currentCubit) {
+      /// Cubit 的 subscription [订阅] 不等于 null
       if (_subscription != null) {
+        /// 取消订阅.
         _unsubscribe();
         _cubit = currentCubit;
         _previousState = _cubit.state;
       }
+      /// 订阅.
       _subscribe();
     }
   }
