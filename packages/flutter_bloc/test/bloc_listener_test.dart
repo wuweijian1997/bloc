@@ -74,7 +74,7 @@ void main() {
         (tester) async {
       try {
         await tester.pumpWidget(
-          BlocListener<Cubit, dynamic>(
+          const BlocListener<Cubit, dynamic>(
             cubit: null,
             listener: null,
             child: null,

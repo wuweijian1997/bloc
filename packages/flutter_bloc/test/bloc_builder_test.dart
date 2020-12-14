@@ -137,7 +137,7 @@ void main() {
         (tester) async {
       try {
         await tester.pumpWidget(
-          BlocBuilder<ThemeCubit, ThemeData>(
+          const BlocBuilder<ThemeCubit, ThemeData>(
             cubit: null,
             builder: null,
           ),

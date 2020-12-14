@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import 'bloc_listener.dart';
-import 'bloc_provider.dart';
 
 /// 通过BuildContext和State来返回widget.
 /// 类似于 [StreamBuilder].

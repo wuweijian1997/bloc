@@ -5,8 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
-import 'bloc_provider.dart';
-
 /// Mixin which allows `MultiBlocListener` to infer the types
 /// of multiple [BlocListener]s.
 mixin BlocListenerSingleChildWidget on SingleChildWidget {}

@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
+
+import 'flutter_bloc/index.dart';
 
 void main() {
   runApp(App());
@@ -12,12 +14,12 @@ void main() {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return flutter_bloc.MultiBlocProvider(
       providers: [
-        BlocProvider<ThemeCubit>(
+        flutter_bloc.BlocProvider<ThemeCubit>(
           create: (BuildContext context) => ThemeCubit(),
         ),
-        BlocProvider<CounterBloc>(
+        flutter_bloc.BlocProvider<CounterBloc>(
           create: (BuildContext context) => CounterBloc(),
         ),
       ],
@@ -110,7 +112,7 @@ enum CounterEvent {
 /// {@template counter_bloc}
 /// A simple [Bloc] which manages an `int` as its state.
 /// {@endtemplate}
-class CounterBloc extends Bloc<CounterEvent, int> {
+class CounterBloc extends flutter_bloc.Bloc<CounterEvent, int> {
   /// {@macro counter_bloc}
   CounterBloc() : super(0);
 
@@ -132,7 +134,7 @@ class CounterBloc extends Bloc<CounterEvent, int> {
 /// {@template brightness_cubit}
 /// A simple [Cubit] which manages the [ThemeData] as its state.
 /// {@endtemplate}
-class ThemeCubit extends Cubit<ThemeData> {
+class ThemeCubit extends flutter_bloc.Cubit<ThemeData> {
   /// {@macro brightness_cubit}
   ThemeCubit() : super(_lightTheme);
 
