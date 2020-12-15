@@ -48,6 +48,27 @@ abstract class BlocBuilderBase<C extends flutter_bloc.Cubit<S>, S>
 class _BlocBuilderBaseState<C extends flutter_bloc.Cubit<S>, S>
     extends State<BlocBuilderBase<C, S>> {
   S _state;
+  C _cubit;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = widget.cubit ?? context.read<C>();
+    _state = _cubit.state;
+  }
+
+
+  @override
+  void didUpdateWidget(BlocBuilderBase<C, S> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    var oldCubit = oldWidget.cubit ?? context.read<C>();
+    var currentCubit = widget.cubit ?? oldCubit;
+    if(oldCubit != currentCubit) {
+      _cubit = currentCubit;
+      _state = _cubit.state;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +76,7 @@ class _BlocBuilderBaseState<C extends flutter_bloc.Cubit<S>, S>
       listener: (BuildContext context, S state) =>
           setState(() => _state = state),
       child: widget.build(context, _state),
-      cubit: widget.cubit ?? context.read<C>(),
+      cubit: _cubit,
       listenerWhen: widget.buildWhen,
     );
   }

@@ -36,14 +36,11 @@ abstract class BlocListenerBase<C extends Cubit<S>, S>
     extends SingleChildStatefulWidget {
   /// BlocListener Base
   const BlocListenerBase({
-    this.child,
+    Widget child,
     this.cubit,
     this.listener,
     this.listenerWhen,
-  });
-
-  /// 子组件
-  final Widget child;
+  }): super(child: child);
 
   /// Cubit,用于修改 state.
   final C cubit;
@@ -70,8 +67,6 @@ class _BlocListenerBaseState<C extends Cubit<S>, S>
 
   BlocWidgetListener<S> get listener => widget.listener;
 
-  Widget get child => widget.child;
-
   @override
   void initState() {
     super.initState();
@@ -96,6 +91,8 @@ class _BlocListenerBaseState<C extends Cubit<S>, S>
       _subscribe();
     }
   }
+
+
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) => child;
